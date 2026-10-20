@@ -1,0 +1,950 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "國土測繪多維度空間 3D 建物屬性 API",
+    "version": "v1",
+    "description": "提供三維建物屬性服務狀態、建物圖層、資料來源與建物屬性查詢。建物屬性查詢依 request body 的 Type 區分 Polygon、District 與 Circle 三種模式。API 主版本為 v1.0；本 OAS 文件修訂版為 v1.1。"
+  },
+  "servers": [
+    {
+      "url": "https://download03.nlsc.gov.tw/WebApi",
+      "description": "正式環境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "建物屬性",
+      "description": "依多邊形、行政區／地籍條件或圓形範圍查詢三維建物屬性。"
+    }
+  ],
+  "paths": {
+    "/BuildingAttributes/Status": {
+      "post": {
+        "operationId": "3dms_bldg3d_v1_BAStatus",
+        "summary": "API_開放_三維建物模型屬性查詢_服務狀態查詢",
+        "description": "查詢三維建物屬性查詢服務目前是否正常啟動。本 API 不需帶入任何參數。",
+        "tags": [
+          "建物屬性"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "responses": {
+          "200": {
+            "description": "服務狀態查詢成功。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingAttributesStatusResponse"
+                },
+                "example": {
+                  "Data": "三維建物屬性查詢服務啟動中 ...",
+                  "Status": {
+                    "Code": 200,
+                    "Message": "success"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/BuildingAttributes/QueryBuilding": {
+      "post": {
+        "operationId": "3dms_bldg3d_v1_BAQueryBuilding",
+        "summary": "API_開放_三維建物模型屬性查詢_建物圖層清單",
+        "description": "取得目前可供建物屬性查詢使用的圖層名稱。回傳值可作為 QueryBuildingAttributes 的 Name。本 API 不需帶入任何參數。",
+        "tags": [
+          "建物屬性"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "responses": {
+          "200": {
+            "description": "建物圖層名稱查詢成功。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingLayerListResponse"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "成功取得圖層名稱清單",
+                    "value": {
+                      "Data": [
+                        "113_基隆市",
+                        "112_基隆市",
+                        "111_基隆市",
+                        "110_基隆市",
+                        "109_基隆市",
+                        "108_基隆市",
+                        "113_臺北市",
+                        "112_臺北市",
+                        "111_臺北市",
+                        "110_臺北市",
+                        "109_臺北市",
+                        "108_臺北市",
+                        "113_新北市",
+                        "112_新北市",
+                        "111_新北市",
+                        "110_新北市",
+                        "109_新北市",
+                        "108_新北市",
+                        "113_新竹市",
+                        "112_新竹市",
+                        "111_新竹市",
+                        "110_新竹市",
+                        "109_新竹市",
+                        "108_新竹市",
+                        "113_桃園市",
+                        "112_桃園市",
+                        "111_桃園市",
+                        "110_桃園市",
+                        "109_桃園市",
+                        "108_桃園市",
+                        "113_新竹縣",
+                        "112_新竹縣",
+                        "111_新竹縣",
+                        "110_新竹縣",
+                        "109_新竹縣",
+                        "108_新竹縣",
+                        "113_苗栗縣",
+                        "112_苗栗縣",
+                        "111_苗栗縣",
+                        "110_苗栗縣",
+                        "109_苗栗縣",
+                        "108_苗栗縣",
+                        "113_臺中市",
+                        "112_臺中市",
+                        "111_臺中市",
+                        "110_臺中市",
+                        "109_臺中市",
+                        "108_臺中市",
+                        "113_彰化縣",
+                        "112_彰化縣",
+                        "111_彰化縣",
+                        "110_彰化縣",
+                        "109_彰化縣",
+                        "108_彰化縣",
+                        "113_南投縣",
+                        "112_南投縣",
+                        "111_南投縣",
+                        "110_南投縣",
+                        "109_南投縣",
+                        "108_南投縣",
+                        "113_雲林縣",
+                        "112_雲林縣",
+                        "111_雲林縣",
+                        "110_雲林縣",
+                        "109_雲林縣",
+                        "108_雲林縣",
+                        "113_嘉義市",
+                        "112_嘉義市",
+                        "111_嘉義市",
+                        "110_嘉義市",
+                        "109_嘉義市",
+                        "108_嘉義市",
+                        "113_嘉義縣",
+                        "112_嘉義縣",
+                        "111_嘉義縣",
+                        "110_嘉義縣",
+                        "109_嘉義縣",
+                        "108_嘉義縣",
+                        "113_臺南市",
+                        "112_臺南市",
+                        "111_臺南市",
+                        "110_臺南市",
+                        "109_臺南市",
+                        "108_臺南市",
+                        "113_高雄市",
+                        "112_高雄市",
+                        "111_高雄市",
+                        "110_高雄市",
+                        "109_高雄市",
+                        "108_高雄市",
+                        "113_屏東縣",
+                        "112_屏東縣",
+                        "111_屏東縣",
+                        "110_屏東縣",
+                        "109_屏東縣",
+                        "108_屏東縣",
+                        "113_宜蘭縣",
+                        "112_宜蘭縣",
+                        "111_宜蘭縣",
+                        "110_宜蘭縣",
+                        "109_宜蘭縣",
+                        "108_宜蘭縣",
+                        "113_花蓮縣",
+                        "112_花蓮縣",
+                        "111_花蓮縣",
+                        "110_花蓮縣",
+                        "109_花蓮縣",
+                        "108_花蓮縣",
+                        "113_臺東縣",
+                        "112_臺東縣",
+                        "111_臺東縣",
+                        "110_臺東縣",
+                        "109_臺東縣",
+                        "108_臺東縣",
+                        "113_連江縣",
+                        "112_連江縣",
+                        "111_連江縣",
+                        "110_連江縣",
+                        "109_連江縣",
+                        "108_連江縣",
+                        "113_金門縣",
+                        "112_金門縣",
+                        "111_金門縣",
+                        "110_金門縣",
+                        "109_金門縣",
+                        "108_金門縣",
+                        "113_金門縣",
+                        "112_澎湖縣",
+                        "111_澎湖縣",
+                        "110_澎湖縣",
+                        "109_澎湖縣",
+                        "108_澎湖縣"
+                      ],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "NoData": {
+                    "summary": "目前沒有可使用的圖層",
+                    "value": {
+                      "Data": [],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/BuildingAttributes/QueryBuildingDataSource": {
+      "post": {
+        "operationId": "3dms_bldg3d_v1_BAQueryBuildingDataSource",
+        "summary": "API_開放_三維建物模型屬性查詢_建物框資料來源清單",
+        "description": "取得目前可供建物屬性查詢使用的資料來源名稱清單。本 API 不需帶入任何參數。",
+        "tags": [
+          "建物屬性"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "responses": {
+          "200": {
+            "description": "建物資料來源查詢成功。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingDataSourceListResponse"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "成功取得資料來源清單",
+                    "value": {
+                      "Data": [
+                        "1/1,000地形圖",
+                        "臺灣通用電子地圖",
+                        "臺灣通用電子地圖建物框分戶成果",
+                        "其他機關產製建物模型成果"
+                      ],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "NoData": {
+                    "summary": "目前沒有可使用的資料來源",
+                    "value": {
+                      "Data": [],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/BuildingAttributes/QueryBuildingAttributes": {
+      "post": {
+        "operationId": "3dms_bldg3d_v1_BAQueryBuildingAttributes",
+        "summary": "API_開放_三維建物模型屬性查詢",
+        "description": "依 Type 選擇查詢方式：\n\n- `Polygon`：以多邊形範圍查詢。\n- `District`：以行政區、地號、地段及地址查詢。\n- `Circle`：以中心點及半徑查詢。\n\n`Coordinates` 的每一組座標順序皆為 `[經度, 緯度]`。",
+        "tags": [
+          "建物屬性"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "requestBody": {
+          "required": true,
+          "description": "依 Type 帶入對應的 JSON 請求格式。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PolygonQueryRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DistrictQueryRequest"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CircleQueryRequest"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "Type",
+                  "mapping": {
+                    "Polygon": "#/components/schemas/PolygonQueryRequest",
+                    "District": "#/components/schemas/DistrictQueryRequest",
+                    "Circle": "#/components/schemas/CircleQueryRequest"
+                  }
+                }
+              },
+              "examples": {
+                "Polygon": {
+                  "summary": "多邊形範圍查詢",
+                  "value": {
+                    "Type": "Polygon",
+                    "Name": "110_臺中市",
+                    "MinBuildingAge": 1,
+                    "MaxBuildingAge": 30,
+                    "MinBuildingFloor": 1,
+                    "MaxBuildingFloor": 5,
+                    "Coordinates": [
+                      [
+                        120.65696409696955,
+                        24.159068438755753
+                      ],
+                      [
+                        120.65511198571312,
+                        24.14729020605607
+                      ],
+                      [
+                        120.68759407481394,
+                        24.147887929534605
+                      ],
+                      [
+                        120.68695903359378,
+                        24.159185053287075
+                      ],
+                      [
+                        120.65696409696955,
+                        24.159068438755753
+                      ]
+                    ]
+                  }
+                },
+                "District": {
+                  "summary": "行政區／地籍條件查詢",
+                  "value": {
+                    "Type": "District",
+                    "Name": "110_臺中市",
+                    "CityDistrict": "臺中市南屯區",
+                    "LandNumber": "11780001",
+                    "Section": "田心段",
+                    "Address": "五權西路二段384號"
+                  }
+                },
+                "Circle": {
+                  "summary": "圓形範圍查詢",
+                  "value": {
+                    "Type": "Circle",
+                    "Name": "110_臺中市",
+                    "MinBuildingAge": 1,
+                    "MaxBuildingAge": 30,
+                    "MinBuildingFloor": 1,
+                    "MaxBuildingFloor": 5,
+                    "Radius": 1359.1690525031886,
+                    "Coordinates": [
+                      [
+                        120.67006556415129,
+                        24.151841252407266
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "查詢成功。Data 為符合條件的建物屬性陣列；查無資料時可為空陣列。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildingAttributeQueryResponse"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "成功回傳",
+                    "value": {
+                      "Data": [
+                        {
+                          "MODEL_LOD": "1",
+                          "BUILD_ID": "21WPU6D49F",
+                          "BUILD_NO": "5",
+                          "BUILD_H": "20.840",
+                          "H_SOURCE": "LiDAR產製DSM",
+                          "H_EXTRAC": "DSM最大與最小值分10層取眾數層",
+                          "SOURCE": "1/1000地形圖",
+                          "MDATE": "201412",
+                          "M_MDATE": "",
+                          "COUNTY": "臺中市",
+                          "M_SOURCE": "國土測繪中心產製",
+                          "BUILD_COMPLETED_DATE": "0870915"
+                        }
+                      ],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "NoData": {
+                    "summary": "查無符合條件的建物",
+                    "value": {
+                      "Data": [],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "請求參數格式錯誤、缺少必要欄位或 Type 不支援。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                },
+                "example": {
+                  "Data": null,
+                  "Status": {
+                    "Code": 400,
+                    "Message": "參數錯誤"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "伺服器內部錯誤。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                },
+                "example": {
+                  "Data": null,
+                  "Status": {
+                    "Code": 500,
+                    "Message": "Internal server error."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Coordinate": {
+        "type": "array",
+        "description": "單一座標，固定依序為 `[經度, 緯度]`。",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+          "type": "number",
+          "format": "double"
+        },
+        "example": [
+          120.67006556415129,
+          24.151841252407266
+        ]
+      },
+      "PolygonQueryRequest": {
+        "type": "object",
+        "title": "Polygon 多邊形查詢",
+        "additionalProperties": false,
+        "required": [
+          "Type",
+          "Name",
+          "MinBuildingAge",
+          "MaxBuildingAge",
+          "MinBuildingFloor",
+          "MaxBuildingFloor",
+          "Coordinates"
+        ],
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": [
+              "Polygon"
+            ],
+            "description": "查詢模式，固定為 Polygon。"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "建物圖層名稱，格式例如 `110_臺中市`。",
+            "example": "110_臺中市"
+          },
+          "MinBuildingAge": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物屋齡下限，單位為年。",
+            "example": 1
+          },
+          "MaxBuildingAge": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物屋齡上限，應大於或等於 MinBuildingAge。",
+            "example": 30
+          },
+          "MinBuildingFloor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物樓層數下限。",
+            "example": 1
+          },
+          "MaxBuildingFloor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物樓層數上限，應大於或等於 MinBuildingFloor。",
+            "example": 5
+          },
+          "Coordinates": {
+            "type": "array",
+            "description": "多邊形頂點座標，至少三組；每組格式為 `[經度, 緯度]`。範例以第一組與最後一組相同的方式閉合多邊形。",
+            "minItems": 3,
+            "items": {
+              "$ref": "#/components/schemas/Coordinate"
+            }
+          }
+        },
+        "example": {
+          "Type": "Polygon",
+          "Name": "110_臺中市",
+          "MinBuildingAge": 1,
+          "MaxBuildingAge": 30,
+          "MinBuildingFloor": 1,
+          "MaxBuildingFloor": 5,
+          "Coordinates": [
+            [
+              120.65696409696955,
+              24.159068438755753
+            ],
+            [
+              120.65511198571312,
+              24.14729020605607
+            ],
+            [
+              120.68759407481394,
+              24.147887929534605
+            ],
+            [
+              120.68695903359378,
+              24.159185053287075
+            ],
+            [
+              120.65696409696955,
+              24.159068438755753
+            ]
+          ]
+        }
+      },
+      "DistrictQueryRequest": {
+        "type": "object",
+        "title": "District 行政區／地籍條件查詢",
+        "additionalProperties": false,
+        "required": [
+          "Type",
+          "Name",
+          "CityDistrict",
+          "LandNumber",
+          "Section",
+          "Address"
+        ],
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": [
+              "District"
+            ],
+            "description": "查詢模式，固定為 District。"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "建物圖層名稱，格式例如 `110_臺中市`。",
+            "example": "110_臺中市"
+          },
+          "CityDistrict": {
+            "type": "string",
+            "minLength": 1,
+            "description": "縣市及鄉鎮市區名稱。",
+            "example": "臺中市南屯區"
+          },
+          "LandNumber": {
+            "type": "string",
+            "minLength": 1,
+            "description": "地號。以字串傳入，避免前置零遺失。",
+            "example": "11780001"
+          },
+          "Section": {
+            "type": "string",
+            "minLength": 1,
+            "description": "地段名稱。",
+            "example": "田心段"
+          },
+          "Address": {
+            "type": "string",
+            "minLength": 1,
+            "description": "地址。",
+            "example": "五權西路二段384號"
+          }
+        },
+        "example": {
+          "Type": "District",
+          "Name": "110_臺中市",
+          "CityDistrict": "臺中市南屯區",
+          "LandNumber": "11780001",
+          "Section": "田心段",
+          "Address": "五權西路二段384號"
+        }
+      },
+      "CircleQueryRequest": {
+        "type": "object",
+        "title": "Circle 圓形查詢",
+        "additionalProperties": false,
+        "required": [
+          "Type",
+          "Name",
+          "MinBuildingAge",
+          "MaxBuildingAge",
+          "MinBuildingFloor",
+          "MaxBuildingFloor",
+          "Radius",
+          "Coordinates"
+        ],
+        "properties": {
+          "Type": {
+            "type": "string",
+            "enum": [
+              "Circle"
+            ],
+            "description": "查詢模式，固定為 Circle。"
+          },
+          "Name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "建物圖層名稱，格式例如 `110_臺中市`。",
+            "example": "110_臺中市"
+          },
+          "MinBuildingAge": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物屋齡下限，單位為年。",
+            "example": 1
+          },
+          "MaxBuildingAge": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物屋齡上限，應大於或等於 MinBuildingAge。",
+            "example": 30
+          },
+          "MinBuildingFloor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物樓層數下限。",
+            "example": 1
+          },
+          "MaxBuildingFloor": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "建物樓層數上限，應大於或等於 MinBuildingFloor。",
+            "example": 5
+          },
+          "Radius": {
+            "type": "number",
+            "format": "double",
+            "exclusiveMinimum": 0,
+            "description": "查詢半徑，單位為公尺。",
+            "example": 1359.1690525031886
+          },
+          "Coordinates": {
+            "type": "array",
+            "description": "圓心座標，只能有一組；格式為 `[經度, 緯度]`。",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/Coordinate"
+            }
+          }
+        },
+        "example": {
+          "Type": "Circle",
+          "Name": "110_臺中市",
+          "MinBuildingAge": 1,
+          "MaxBuildingAge": 30,
+          "MinBuildingFloor": 1,
+          "MaxBuildingFloor": 5,
+          "Radius": 1359.1690525031886,
+          "Coordinates": [
+            [
+              120.67006556415129,
+              24.151841252407266
+            ]
+          ]
+        }
+      },
+      "BuildingAttribute": {
+        "type": "object",
+        "description": "單筆建物屬性。API 回傳的數值型內容目前以字串表示。",
+        "required": [
+          "MODEL_LOD",
+          "BUILD_ID",
+          "BUILD_NO",
+          "BUILD_H",
+          "H_SOURCE",
+          "H_EXTRAC",
+          "SOURCE",
+          "MDATE",
+          "M_MDATE",
+          "COUNTY",
+          "M_SOURCE",
+          "BUILD_COMPLETED_DATE"
+        ],
+        "properties": {
+          "MODEL_LOD": {
+            "type": "string",
+            "description": "建物模型細緻度（LOD）。",
+            "example": "1"
+          },
+          "BUILD_ID": {
+            "type": "string",
+            "description": "建物識別碼。",
+            "example": "21WPU6D49F"
+          },
+          "BUILD_NO": {
+            "type": "string",
+            "description": "建物編號。",
+            "example": "5"
+          },
+          "BUILD_H": {
+            "type": "string",
+            "description": "建物高度。",
+            "example": "20.840"
+          },
+          "H_SOURCE": {
+            "type": "string",
+            "description": "高度資料來源。",
+            "example": "LiDAR產製DSM"
+          },
+          "H_EXTRAC": {
+            "type": "string",
+            "description": "高度萃取或計算方式。欄位名稱依 API 實際回傳維持為 H_EXTRAC。",
+            "example": "DSM最大與最小值分10層取眾數層"
+          },
+          "SOURCE": {
+            "type": "string",
+            "description": "原始資料來源。",
+            "example": "1/1000地形圖"
+          },
+          "MDATE": {
+            "type": "string",
+            "description": "資料日期或製作日期，格式依資料來源而定。",
+            "example": "201412"
+          },
+          "M_MDATE": {
+            "type": "string",
+            "description": "模型資料日期；無資料時可能為空字串。",
+            "example": ""
+          },
+          "COUNTY": {
+            "type": "string",
+            "description": "縣市名稱。",
+            "example": "臺中市"
+          },
+          "M_SOURCE": {
+            "type": "string",
+            "description": "模型資料提供或產製來源。",
+            "example": "國土測繪中心產製"
+          },
+          "BUILD_COMPLETED_DATE": {
+            "type": "string",
+            "description": "建物完成日期，格式依原始資料而定。",
+            "example": "0870915"
+          }
+        },
+        "additionalProperties": true
+      },
+      "ApiStatus": {
+        "type": "object",
+        "required": [
+          "Code",
+          "Message"
+        ],
+        "properties": {
+          "Code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "API 執行狀態碼。",
+            "example": 200
+          },
+          "Message": {
+            "type": "string",
+            "description": "API 執行結果訊息。",
+            "example": "success"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BuildingAttributeQueryResponse": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "properties": {
+          "Data": {
+            "type": "array",
+            "description": "符合查詢條件的建物屬性清單。",
+            "items": {
+              "$ref": "#/components/schemas/BuildingAttribute"
+            }
+          },
+          "Status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "Data": [
+            {
+              "MODEL_LOD": "1",
+              "BUILD_ID": "21WPU6D49F",
+              "BUILD_NO": "5",
+              "BUILD_H": "20.840",
+              "H_SOURCE": "LiDAR產製DSM",
+              "H_EXTRAC": "DSM最大與最小值分10層取眾數層",
+              "SOURCE": "1/1000地形圖",
+              "MDATE": "201412",
+              "M_MDATE": "",
+              "COUNTY": "臺中市",
+              "M_SOURCE": "國土測繪中心產製",
+              "BUILD_COMPLETED_DATE": "0870915"
+            }
+          ],
+          "Status": {
+            "Code": 200,
+            "Message": "success"
+          }
+        }
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "properties": {
+          "Data": {
+            "description": "錯誤時的附加資料，通常為 null。"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BuildingAttributesStatusResponse": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "properties": {
+          "Data": {
+            "type": "string",
+            "description": "三維建物屬性查詢服務目前的運作狀態說明。",
+            "example": "三維建物屬性查詢服務啟動中 ..."
+          },
+          "Status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BuildingLayerListResponse": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "properties": {
+          "Data": {
+            "type": "array",
+            "description": "目前可供建物屬性查詢使用的建物圖層名稱清單。",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "113_基隆市",
+              "112_臺北市",
+              "111_新北市"
+            ]
+          },
+          "Status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BuildingDataSourceListResponse": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "properties": {
+          "Data": {
+            "type": "array",
+            "description": "目前可供建物屬性查詢使用的資料來源名稱清單。",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "1/1,000地形圖",
+              "臺灣通用電子地圖",
+              "臺灣通用電子地圖建物框分戶成果",
+              "其他機關產製建物模型成果"
+            ]
+          },
+          "Status": {
+            "$ref": "#/components/schemas/ApiStatus"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

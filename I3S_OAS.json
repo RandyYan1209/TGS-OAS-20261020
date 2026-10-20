@@ -1,0 +1,282 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "國土測繪圖資三維建物模型I3S服務",
+    "version": "v1",
+    "description": "提供國土測繪多維度空間 I3S 建物模型、道路模型，以及指定範圍三維建物模型轉檔後產製的 I3S 服務。API 主版本為 v1.0；本 OAS 文件修訂版為 v1.2。"
+  },
+  "servers": [
+    {
+      "url": "https://i3s.nlsc.gov.tw"
+    }
+  ],
+  "tags": [
+    {
+      "name": "建物模型",
+      "description": "建物融合版與分棟版 I3S 模型服務。"
+    },
+    {
+      "name": "道路模型",
+      "description": "道路原始版與貼地版 I3S 模型服務。"
+    },
+    {
+      "name": "三維建物單棟或區域式服務發布",
+      "description": "三維建物單棟或區域式發布 I3S 服務。。"
+    }
+  ],
+  "paths": {
+    "/building/i3s/SceneServer/layers/{building_service_code}": {
+      "get": {
+        "operationId": "3dms_i3s_v1_building",
+        "summary": "I3S_三維建物模型_融合版及分棟版",
+        "description": "依建物服務代碼取得 I3S 建物模型。代碼 0–21 為融合版，代碼 30–49 為分棟版。",
+        "tags": [
+          "建物模型"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "building_service_code",
+            "in": "path",
+            "description": "欲查詢的建物模型服務代碼（building_service_code）。\n\n| 代碼 | 名稱 |\n|---:|---|\n| 0 | 臺北市建物模型（融合版） |\n| 1 | 臺中市建物模型（融合版） |\n| 2 | 基隆市建物模型（融合版） |\n| 3 | 臺南市建物模型（融合版） |\n| 4 | 高雄市建物模型（融合版） |\n| 5 | 新北市建物模型（融合版） |\n| 6 | 宜蘭縣建物模型（融合版） |\n| 7 | 桃園市建物模型（融合版） |\n| 8 | 嘉義市建物模型（融合版） |\n| 9 | 新竹縣建物模型（融合版） |\n| 10 | 苗栗縣建物模型（融合版） |\n| 11 | 南投縣建物模型（融合版） |\n| 12 | 彰化縣建物模型（融合版） |\n| 13 | 新竹市建物模型（融合版） |\n| 14 | 雲林縣建物模型（融合版） |\n| 15 | 嘉義縣建物模型（融合版） |\n| 16 | 屏東縣建物模型（融合版） |\n| 17 | 花蓮縣建物模型（融合版） |\n| 18 | 臺東縣建物模型（融合版） |\n| 19 | 澎湖縣建物模型（融合版） |\n| 20 | 金門縣建物模型（融合版） |\n| 21 | 連江縣建物模型（融合版） |\n| 30 | 臺北市建物模型（分棟版） |\n| 31 | 臺中市建物模型（分棟版） |\n| 32 | 基隆市建物模型（分棟版） |\n| 33 | 臺南市建物模型（分棟版） |\n| 34 | 高雄市建物模型（分棟版） |\n| 35 | 新北市建物模型（分棟版） |\n| 36 | 宜蘭縣建物模型（分棟版） |\n| 37 | 桃園市建物模型（分棟版） |\n| 38 | 嘉義市建物模型（分棟版） |\n| 39 | 新竹縣建物模型（分棟版） |\n| 40 | 苗栗縣建物模型（分棟版） |\n| 41 | 南投縣建物模型（分棟版） |\n| 42 | 彰化縣建物模型（分棟版） |\n| 43 | 新竹市建物模型（分棟版） |\n| 44 | 雲林縣建物模型（分棟版） |\n| 45 | 嘉義縣建物模型（分棟版） |\n| 46 | 屏東縣建物模型（分棟版） |\n| 47 | 花蓮縣建物模型（分棟版） |\n| 48 | 臺東縣建物模型（分棟版） |\n| 49 | 澎湖縣建物模型（分棟版） |",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49
+              ],
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得 I3S Scene Layer 資料。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "服務代碼錯誤或參數格式不正確。"
+          },
+          "404": {
+            "description": "查無指定的 I3S 圖層。"
+          }
+        }
+      }
+    },
+    "/road/i3s/SceneServer/layers/{road_service_code}": {
+      "get": {
+        "operationId": "3dms_i3s_v1_road",
+        "summary": "I3S_三維道路模型_原始成果版",
+        "description": "依道路服務代碼取得 I3S 三維道路模型原始成果版。",
+        "tags": [
+          "道路模型"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "road_service_code",
+            "in": "path",
+            "description": "欲查詢的原始版道路模型服務代碼（road_service_code）。\n\n| 代碼 | 名稱 |\n|---:|---|\n| 0 | 臺北市道路模型（原始版） |\n| 1 | 臺中市道路模型（原始版） |\n| 2 | 基隆市道路模型（原始版） |\n| 3 | 臺南市道路模型（原始版） |\n| 4 | 高雄市道路模型（原始版） |\n| 5 | 新北市道路模型（原始版） |\n| 6 | 宜蘭縣道路模型（原始版） |\n| 7 | 桃園市道路模型（原始版） |\n| 9 | 新竹縣道路模型（原始版） |\n| 10 | 苗栗縣道路模型（原始版） |\n| 11 | 南投縣道路模型（原始版） |\n| 13 | 新竹市道路模型（原始版） |\n| 14 | 雲林縣道路模型（原始版） |\n| 17 | 花蓮縣道路模型（原始版） |\n| 18 | 臺東縣道路模型（原始版） |\n| 19 | 澎湖縣道路模型（原始版） |",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9,
+                10,
+                11,
+                13,
+                14,
+                17,
+                18,
+                19
+              ],
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得 I3S Scene Layer 資料。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "服務代碼錯誤或參數格式不正確。"
+          },
+          "404": {
+            "description": "查無指定的 I3S 圖層。"
+          }
+        }
+      }
+    },
+    "/road2nd/i3s/SceneServer/layers/{road_service_code}": {
+      "get": {
+        "operationId": "3dms_i3s_v1_road2nd",
+        "summary": "I3S_三維道路模型_地形貼合版",
+        "description": "依道路服務代碼取得 I3S 三維道路模型地形貼合版。",
+        "tags": [
+          "道路模型"
+        ],
+        "x-updateTime": "2026-07-21T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "road_service_code",
+            "in": "path",
+            "description": "欲查詢的貼地版道路模型服務代碼（road_service_code）。\n\n| 代碼 | 名稱 |\n|---:|---|\n| 0 | 臺北市道路模型（貼地版） |\n| 1 | 臺中市道路模型（貼地版） |\n| 2 | 基隆市道路模型（貼地版） |\n| 3 | 臺南市道路模型（貼地版） |\n| 4 | 高雄市道路模型（貼地版） |\n| 5 | 新北市道路模型（貼地版） |\n| 6 | 宜蘭縣道路模型（貼地版） |\n| 7 | 桃園市道路模型（貼地版） |\n| 9 | 新竹縣道路模型（貼地版） |\n| 10 | 苗栗縣道路模型（貼地版） |\n| 11 | 南投縣道路模型（貼地版） |\n| 13 | 新竹市道路模型（貼地版） |\n| 14 | 雲林縣道路模型（貼地版） |\n| 17 | 花蓮縣道路模型（貼地版） |\n| 18 | 臺東縣道路模型（貼地版） |\n| 19 | 澎湖縣道路模型（貼地版） |",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9,
+                10,
+                11,
+                13,
+                14,
+                17,
+                18,
+                19
+              ],
+              "example": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得 I3S Scene Layer 資料。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "服務代碼錯誤或參數格式不正確。"
+          },
+          "404": {
+            "description": "查無指定的 I3S 圖層。"
+          }
+        }
+      }
+    },
+    "/PartialBuildingService/I3S_Service/i3s/rest/services/{PartialLayerName}/SceneServer/layers/0": {
+      "get": {
+        "operationId": "3dms_i3s_v1_PBSService",
+        "summary": "I3S_三維建物服務_指定範圍",
+        "description": "本服務為呼叫「指定範圍三維建物模型轉檔服務API」後即時轉檔產生並提供之I3S Scene Layer 服務。請先呼叫「指定範圍三維建物模型轉檔服務API」，直接使用回應 Data.ServiceUrls.I3S 的完整服務網址，即可取得 SceneServer layer服務；若自行組合路徑，請取Data.PartialLayerName 作為服務識別碼取得 SceneServer layer服務。由於為即時轉檔發布之服務，請於呼叫後5至10分鐘再使用服務網址，介接網址自產製完成日起之使用期限為7天。",
+        "tags": [
+          "三維建物單棟或區域式服務發布"
+        ],
+        "x-updateTime": "2026-06-12T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "PartialLayerName",
+            "in": "path",
+            "description": "轉檔服務識別碼，由「指定範圍三維建物模型轉檔服務API」成功回應 Data.PartialLayerName 的服務識別碼；格式「縣市_轉檔日期_轉檔時間_4碼隨機碼」，請直接使用PartialLayerName回傳值進行測試。",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "宜蘭縣_1151007_1508_qgox"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功取得 I3S Scene Layer JSON。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "服務識別碼格式不正確。"
+          },
+          "404": {
+            "description": "查無指定服務，或服務已超過保留期限。"
+          }
+        },
+        "servers": [
+          {
+            "url": "https://i3s.nlsc.gov.tw/WebApi"
+          }
+        ]
+      }
+    }
+  }
+}
