@@ -1,0 +1,867 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "指定範圍三維建物模型轉檔服務",
+    "description": "本文件描述指定範圍三維建物模型轉檔服務，包含服務狀態查詢、建物圖層清單，以及依多邊形、指定點位或圓形範圍產製 I3S、3D Tiles 或兩者的轉檔服務。API 主版本為 v1.0；本 OAS 文件修訂版為 v1.2。",
+    "version": "v1",
+    "x-unique-id": "3DMAPS3DBUILD"
+  },
+  "servers": [
+    {
+      "url": "https://download03.nlsc.gov.tw/WebApi",
+      "description": "WebAPI 環境主機"
+    }
+  ],
+  "tags": [
+    {
+      "name": "服務狀態",
+      "description": "取得指定範圍三維建物模型轉檔之服務狀態"
+    },
+    {
+      "name": "圖層清單",
+      "description": "取得指定範圍三維建物模型轉檔之建物圖層清單"
+    },
+    {
+      "name": "三維建物模型轉檔",
+      "description": "指定範圍進行三維建物模型轉檔"
+    }
+  ],
+  "paths": {
+    "/PartialBuildingService/Status": {
+      "post": {
+        "operationId": "3dms_pubapi_v1_PBSStatus",
+        "tags": [
+          "服務狀態"
+        ],
+        "summary": "API_開放_指定範圍三維建物模型轉檔_服務狀態查詢",
+        "responses": {
+          "200": {
+            "description": "API 呼叫完成；實際回應為序列化的 JSON 字串，解析字串內容後可取得 Data 與 Status。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialBuildingService_Status_Response"
+                },
+                "examples": {
+                  "successExample": {
+                    "summary": "服務正常",
+                    "value": "{\"Data\":\"三維建物單棟或區域式發布服務啟動中...\",\"Status\":{\"Code\":200,\"Message\":\"success\"}}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "取得指定範圍三維建物模型轉檔服務目前的啟動狀態。",
+        "x-updateTime": "2026-10-08T00:00:00+08:00"
+      }
+    },
+    "/PartialBuildingService/QueryBuilding": {
+      "post": {
+        "operationId": "3dms_pubapi_v1_PBSQueryBuilding",
+        "tags": [
+          "圖層清單"
+        ],
+        "summary": "API_開放_指定範圍三維建物模型轉檔_建物圖層清單",
+        "description": "取得目前可供指定範圍三維建物模型轉檔使用的建物圖層名稱清單；回傳值可作為轉檔 API request body 的 layername。",
+        "responses": {
+          "200": {
+            "description": "API 呼叫完成。Data 為可使用的建物圖層名稱陣列。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialBuildingService_QueryBuilding_Response"
+                },
+                "examples": {
+                  "successExample": {
+                    "summary": "成功取得圖層名稱清單",
+                    "value": {
+                      "Data": [
+                        "基隆市",
+                        "臺北市",
+                        "新北市",
+                        "新竹市",
+                        "桃園市",
+                        "新竹縣",
+                        "苗栗縣",
+                        "臺中市",
+                        "彰化縣",
+                        "南投縣",
+                        "雲林縣",
+                        "嘉義市",
+                        "嘉義縣",
+                        "臺南市",
+                        "高雄市",
+                        "屏東縣",
+                        "宜蘭縣",
+                        "花蓮縣",
+                        "臺東縣",
+                        "連江縣",
+                        "金門縣",
+                        "澎湖縣"
+                      ],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "emptyExample": {
+                    "summary": "目前沒有可使用的圖層",
+                    "value": {
+                      "Data": [],
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-updateTime": "2026-07-21T00:00:00+08:00"
+      }
+    },
+    "/PartialBuildingService/Transfer_Request/SelectByPolygon/{serviceType}": {
+      "post": {
+        "operationId": "3dms_pubapi_v1_PBSTRSelectByPolygon",
+        "tags": [
+          "三維建物模型轉檔"
+        ],
+        "summary": "API_開放_指定多邊形三維建物模型轉檔",
+        "description": "依多邊形範圍選取建物並建立三維建物模型轉檔工作， serviceType 可指定 i3s、3dtiles 或 both。使用本支API取得指定範圍之I3S與3D Tiles服務時，具有單次服務請求最大範圍及之模型棟數限制限制。圓形範圍半徑不得超過500公尺，矩形範圍長寬各不得超過500公尺；模型棟數則限制不能超過500棟。呼叫API後即時轉檔產生之I3S服務網址對應至國土測繪圖資三維建物模型I3S服務中「三維建物單棟或區域式服務發布」；呼叫API後即時轉檔產生之3D Tiles服務網址則對應至國土測繪圖資三維建物模型3D Tiles服務中「三維建物單棟或區域式服務發布」。受理成功後，請由 Data.ServiceUrls 取得介接網址；等待時間、保留天數與到期時間分別以 Data.Notice、Data.RetentionDays 與 Data.ExpirationTime 為準。介接網址使用期限為7天。",
+        "x-updateTime": "2026-10-08T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "serviceType",
+            "in": "path",
+            "required": true,
+            "description": "指定產製的三維模型服務類型：i3s、3dtiles 或 both。",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i3s",
+                "3dtiles",
+                "both"
+              ],
+              "example": "both"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "指定範圍、座標系統及建物圖層。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialBuildingService_Transfer_Request_SelectByPolygon_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API 呼叫完成；受理成功時 Data 為物件，包含 Message、Notice、ServiceUrls、RetentionDays、ExpirationTime、ExpirationNotice 與 PartialLayerName。錯誤回應可能是序列化的 JSON 字串，且 HTTP 200 不代表 Status.Code 必為 200。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialBuildingService_Transfer_Response"
+                },
+                "examples": {
+                  "i3sExample": {
+                    "summary": "產製 I3S",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "threeDTilesExample": {
+                    "summary": "產製 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "bothExample": {
+                    "summary": "同時產製 I3S 與 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0",
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "failureExample": {
+                    "summary": "條件未篩選到建物（JSON 字串）",
+                    "value":{
+                      "Data":"The number of buildings filtered by this condition is 0. Please reconfirm the condition.",
+                      "Status":{
+                         "Code":400,
+                         "Message":"Bad Request"
+                        }
+                     }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "已觀察到多邊形查詢發生未處理的例外時，伺服器回傳 HTTP 500 與 HTML 錯誤頁面；此回應不是 Data／Status JSON。",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string",
+                  "description": "伺服器產生的 HTML 錯誤頁面。"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/PartialBuildingService/Transfer_Request/SelectByPoint/{serviceType}": {
+      "post": {
+        "operationId": "3dms_pubapi_v1_PBSTRSelectByPoint",
+        "tags": [
+          "三維建物模型轉檔"
+        ],
+        "summary": "API_開放_指定點位三維建物模型轉檔",
+        "description": "依指定點位選取建物並建立三維建物模型轉檔工作， serviceType 可指定 i3s、3dtiles 或 both。呼叫API後即時轉檔產生之I3S服務網址對應至國土測繪圖資三維建物模型I3S服務中「三維建物單棟或區域式服務發布」；呼叫API後即時轉檔產生之3D Tiles服務網址則對應至國土測繪圖資三維建物模型3D Tiles服務中「三維建物單棟或區域式服務發布」。受理成功後，請由 Data.ServiceUrls 取得介接網址；等待時間、保留天數與到期時間分別以 Data.Notice、Data.RetentionDays 與 Data.ExpirationTime 為準。介接網址使用期限為7天。",
+        "x-updateTime": "2026-10-08T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "serviceType",
+            "in": "path",
+            "required": true,
+            "description": "指定產製的三維模型服務類型：i3s、3dtiles 或 both。",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i3s",
+                "3dtiles",
+                "both"
+              ],
+              "example": "both"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "指定範圍、座標系統及建物圖層。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialBuildingService_Transfer_Request_SelectByPoint_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API 呼叫完成；受理成功時 Data 為物件，包含 Message、Notice、ServiceUrls、RetentionDays、ExpirationTime、ExpirationNotice 與 PartialLayerName。錯誤回應可能是序列化的 JSON 字串，且 HTTP 200 不代表 Status.Code 必為 200。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialBuildingService_Transfer_Response"
+                },
+                "examples": {
+                  "i3sExample": {
+                    "summary": "產製 I3S",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "threeDTilesExample": {
+                    "summary": "產製 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "bothExample": {
+                    "summary": "同時產製 I3S 與 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0",
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "failureExample": {
+                    "summary": "條件未篩選到建物（JSON 字串）",
+                    "value":{
+                       "Data":"The number of buildings filtered by this condition is 0. Please reconfirm the condition.",
+                       "Status":{
+                          "Code":400,
+                          "Message":"Bad Request"
+                        }
+                     }
+                  },
+                  "exceptionExample": {
+                    "summary": "查詢建物發生例外（HTTP 200，Status.Code 為 500；JSON 字串）",
+                    "value":{
+                       "Data":"Finding specific buildings occurred exception error. The request will be interrupted and please contact official personnel.",
+                       "Status":{
+                          "Code":500,
+                          "Message":"Error"
+                       }
+                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/PartialBuildingService/Transfer_Request/SelectByCircle/{serviceType}": {
+      "post": {
+        "operationId": "3dms_pubapi_v1_PBSTRSelectByCircle",
+        "tags": [
+          "三維建物模型轉檔"
+        ],
+        "summary": "API_開放_指定圓形範圍三維建物模型轉檔",
+        "description": "依圓形範圍選取建物並建立三維建物模型轉檔工作， serviceType 可指定 i3s、3dtiles 或 both。使用本支API取得指定範圍之I3S與3D Tiles服務時，具有單次服務請求最大範圍及之模型棟數限制限制。圓形範圍半徑不得超過500公尺，矩形範圍長寬各不得超過500公尺；模型棟數則限制不能超過500棟。呼叫API後即時轉檔產生之I3S服務網址對應至國土測繪圖資三維建物模型I3S服務中「三維建物單棟或區域式服務發布」；呼叫API後即時轉檔產生之3D Tiles服務網址則對應至國土測繪圖資三維建物模型3D Tiles服務中「三維建物單棟或區域式服務發布」。受理成功後，請由 Data.ServiceUrls 取得介接網址；等待時間、保留天數與到期時間分別以 Data.Notice、Data.RetentionDays 與 Data.ExpirationTime 為準。介接網址使用期限為7天。",
+        "x-updateTime": "2026-10-08T00:00:00+08:00",
+        "parameters": [
+          {
+            "name": "serviceType",
+            "in": "path",
+            "required": true,
+            "description": "指定產製的三維模型服務類型：i3s、3dtiles 或 both。",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i3s",
+                "3dtiles",
+                "both"
+              ],
+              "example": "both"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "指定範圍、座標系統及建物圖層。",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartialBuildingService_Transfer_Request_SelectByCircle_body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "API 呼叫完成；受理成功時 Data 為物件，包含 Message、Notice、ServiceUrls、RetentionDays、ExpirationTime、ExpirationNotice 與 PartialLayerName。錯誤回應可能是序列化的 JSON 字串，且 HTTP 200 不代表 Status.Code 必為 200。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartialBuildingService_Transfer_Response"
+                },
+                "examples": {
+                  "i3sExample": {
+                    "summary": "產製 I3S",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "threeDTilesExample": {
+                    "summary": "產製 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "bothExample": {
+                    "summary": "同時產製 I3S 與 3D Tiles",
+                    "value": {
+                      "Data": {
+                        "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+                        "Notice": "請於 5~10 分鐘完成後再行使用。",
+                        "ServiceUrls": {
+                          "I3S": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0",
+                          "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+                        },
+                        "RetentionDays": 7,
+                        "ExpirationTime": "2026/10/15 上午 11:51:48",
+                        "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+                        "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+                      },
+                      "Status": {
+                        "Code": 200,
+                        "Message": "success"
+                      }
+                    }
+                  },
+                  "failureExample": {
+                    "summary": "條件未篩選到建物（JSON 字串）",
+                    "value": {
+                      "Data":"The number of buildings filtered by this condition is 0. Please reconfirm the condition.",
+                      "Status":{
+                         "Code":400,
+                         "Message":"Bad Request"
+                       }
+                     }
+                  },
+                  "exceptionExample": {
+                    "summary": "查詢建物發生例外（HTTP 200，Status.Code 為 500；JSON 字串）",
+                    "value": {
+                      "Data":"Finding specific buildings occurred exception error. The request will be interrupted and please contact official personnel.",
+                      "Status":{
+                         "Code":500,
+                         "Message":"Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PartialBuildingService_Transfer_Request_SelectByCircle_body": {
+        "required": [
+          "coordinates",
+          "distance",
+          "epsg",
+          "layername"
+        ],
+        "type": "object",
+        "properties": {
+          "distance": {
+            "type": "number",
+            "example": 100
+          },
+          "epsg": {
+            "type": "integer",
+            "example": 4326,
+            "description": "座標系統 EPSG 代碼，例如 4326。"
+          },
+          "coordinates": {
+            "type": "array",
+            "description": "經緯度座標，格式為 [經度, 緯度]",
+            "example": [
+              121.803503,
+              24.465825
+            ],
+            "items": {
+              "type": "number",
+              "format": "double"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "layername": {
+            "type": "string",
+            "example": "宜蘭縣",
+            "description": "建物圖層名稱，請先由建物圖層清單 API 取得。"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Request_SelectByPoint_body": {
+        "required": [
+          "coordinates",
+          "epsg",
+          "layername"
+        ],
+        "type": "object",
+        "properties": {
+          "epsg": {
+            "type": "integer",
+            "example": 4326,
+            "description": "座標系統 EPSG 代碼，例如 4326。"
+          },
+          "coordinates": {
+            "type": "array",
+            "description": "經緯度座標，格式為 [經度, 緯度]",
+            "example": [
+              121.803503,
+              24.465825
+            ],
+            "items": {
+              "type": "number",
+              "format": "double"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "layername": {
+            "type": "string",
+            "example": "宜蘭縣",
+            "description": "建物圖層名稱，請先由建物圖層清單 API 取得。"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Request_SelectByPolygon_body": {
+        "required": [
+          "coordinates",
+          "epsg",
+          "layername"
+        ],
+        "type": "object",
+        "properties": {
+          "epsg": {
+            "type": "integer",
+            "example": 4326,
+            "description": "座標系統 EPSG 代碼，例如 4326。"
+          },
+          "coordinates": {
+            "type": "array",
+            "description": "多邊形座標點清單；每一點格式為 [X, Y]，首尾點應相同以形成封閉多邊形。",
+            "example": [
+              [
+              121.802363,
+              24.465159
+              ],
+              [
+              121.802128,
+              24.466358
+              ],
+              [
+              121.805011,
+              24.467764
+              ],
+              [
+              121.805540,
+              24.466830
+              ]
+            ],
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            },
+            "minItems": 4
+          },
+          "layername": {
+            "type": "string",
+            "example": "宜蘭縣",
+            "description": "建物圖層名稱，請先由建物圖層清單 API 取得。"
+          }
+        }
+      },
+      "PartialBuildingService_ApiStatus": {
+        "type": "object",
+        "required": [
+          "Code",
+          "Message"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Code": {
+            "type": "integer",
+            "format": "int32",
+            "description": "API 執行狀態碼，可能與 HTTP 狀態碼不同，請搭配 Message 判斷。",
+            "example": 200
+          },
+          "Message": {
+            "type": "string",
+            "description": "API 執行結果訊息。",
+            "example": "success"
+          }
+        }
+      },
+      "PartialBuildingService_Status_Response": {
+        "type": "string",
+        "description": "實際 HTTP 回應本文為字串，其內容為包含 Data 與 Status 的 JSON。先解析回應本文，再將取得的字串解析為 JSON 物件。",
+        "contentMediaType": "application/json",
+        "contentSchema": {
+          "$ref": "#/components/schemas/PartialBuildingService_Status_Payload"
+        },
+        "example": "{\"Data\":\"三維建物單棟或區域式發布服務啟動中...\",\"Status\":{\"Code\":200,\"Message\":\"success\"}}"
+      },
+      "PartialBuildingService_QueryBuilding_Response": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Data": {
+            "type": "array",
+            "description": "可使用的建物圖層名稱清單，格式通常為 `縣市名稱`。",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "基隆市",
+              "臺北市",
+              "苗栗縣"
+            ]
+          },
+          "Status": {
+            "$ref": "#/components/schemas/PartialBuildingService_ApiStatus"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Response": {
+        "description": "轉檔受理成功時為 JSON 物件；已觀察到的錯誤回應為序列化的 JSON 字串，請依回應型別解析並檢查 Status。",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PartialBuildingService_Transfer_Success_Response"
+          },
+          {
+            "$ref": "#/components/schemas/PartialBuildingService_Transfer_Error_Response"
+          }
+        ]
+      },
+      "PartialBuildingService_Status_Payload": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Data": {
+            "type": "string",
+            "description": "三維建物單棟或區域式發布服務目前的狀態說明。",
+            "example": "三維建物單棟或區域式發布服務啟動中..."
+          },
+          "Status": {
+            "$ref": "#/components/schemas/PartialBuildingService_ApiStatus"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_ServiceUrls": {
+        "type": "object",
+        "description": "產製服務的完整介接網址；依 serviceType 回傳 I3S、3DTiles 或兩者。請直接使用回傳網址，縣市名稱在網址中會以百分比編碼表示。",
+        "minProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "I3S": {
+            "type": "string",
+            "format": "uri",
+            "description": "I3S Scene Layer 介接網址。",
+            "example": "https://i3s.nlsc.gov.tw/WebAPI/PartialBuildingService/I3S_Service/i3s/rest/services/宜蘭縣_1151008_1151_ezpy/SceneServer/layers/0"
+          },
+          "3DTiles": {
+            "type": "string",
+            "format": "uri",
+            "description": "3D Tiles tileset.json 介接網址。",
+            "example": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Data": {
+        "type": "object",
+        "description": "轉檔受理成功時的回應資料，包含作業訊息、服務網址、保留期限與服務識別碼。",
+        "required": [
+          "Message",
+          "Notice",
+          "ServiceUrls",
+          "RetentionDays",
+          "ExpirationTime",
+          "ExpirationNotice",
+          "PartialLayerName"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Message": {
+            "type": "string",
+            "description": "轉檔發布作業受理訊息。",
+            "example": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。"
+          },
+          "Notice": {
+            "type": "string",
+            "description": "服務使用前的等待時間說明。",
+            "example": "請於 5~10 分鐘完成後再行使用。"
+          },
+          "ServiceUrls": {
+            "$ref": "#/components/schemas/PartialBuildingService_Transfer_ServiceUrls"
+          },
+          "RetentionDays": {
+            "type": "integer",
+            "description": "介接網址保留天數，以實際回應為準。",
+            "example": 7
+          },
+          "ExpirationTime": {
+            "type": "string",
+            "description": "服務到期時間文字，例如「2026/10/15 上午 11:51:48」；實際回應並非 ISO 日期時間格式。",
+            "example": "2026/10/15 上午 11:51:48"
+          },
+          "ExpirationNotice": {
+            "type": "string",
+            "description": "介接網址保留期限與停止服務時間說明。",
+            "example": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。"
+          },
+          "PartialLayerName": {
+            "type": "string",
+            "description": "轉檔後的服務識別碼，格式例如「縣市名稱_民國日期_時間_隨機碼」，可作為服務網址的 countyname_date_time_random 路徑參數。",
+            "example": "宜蘭縣_1151008_1151_ezpy"
+          }
+        },
+        "example": {
+          "Message": "您的三維建物區域式服務 API 已開始進行轉檔發布作業。",
+          "Notice": "請於 5~10 分鐘完成後再行使用。",
+          "ServiceUrls": {
+            "3DTiles": "https://3dtiles.nlsc.gov.tw/WebAPI/PartialBuildingService/3DT_Service/宜蘭縣_1151008_1151_ezpy/tileset.json"
+          },
+          "RetentionDays": 7,
+          "ExpirationTime": "2026/10/15 上午 11:51:48",
+          "ExpirationNotice": "介接網址僅保留 7 天使用期，預計於 2026/10/15 上午 11:51:48 停止服務。",
+          "PartialLayerName": "宜蘭縣_1151008_1151_ezpy"
+        }
+      },
+      "PartialBuildingService_Transfer_Success_Response": {
+        "type": "object",
+        "description": "轉檔受理成功時，Data 為包含服務資訊的物件。",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Data": {
+            "$ref": "#/components/schemas/PartialBuildingService_Transfer_Data"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/PartialBuildingService_ApiStatus"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Error_Payload": {
+        "type": "object",
+        "required": [
+          "Data",
+          "Status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "Data": {
+            "type": "string",
+            "description": "未篩選到建物或執行失敗時的錯誤說明。"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/PartialBuildingService_ApiStatus"
+          }
+        }
+      },
+      "PartialBuildingService_Transfer_Error_Response": {
+        "type": "string",
+        "description": "已觀察到的錯誤回應本文為字串，字串內容是含 Data 與 Status 的 JSON；需再次解析字串內容。HTTP 200 仍可能搭配 Status.Code 400 或 500。",
+        "contentMediaType": "application/json",
+        "contentSchema": {
+          "$ref": "#/components/schemas/PartialBuildingService_Transfer_Error_Payload"
+        },
+        "example": "{\"Data\":\"Finding specific buildings occurred exception error. The request will be interrupted and please contact official personnel.\",\"Status\":{\"Code\":500,\"Message\":\"Error\"}}"
+      }
+    }
+  }
+}
